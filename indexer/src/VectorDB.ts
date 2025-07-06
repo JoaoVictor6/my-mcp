@@ -1,6 +1,7 @@
 
 import { QdrantClient } from "@qdrant/js-client-rest";
 import { Context, Data, Effect, Layer } from "effect";
+import { Logger } from "./logger.js";
 
 const COLLECTION_NAME = "my-mcp";
 
@@ -37,20 +38,29 @@ export const make = Effect.gen(function*(_) {
   const qdrantWithCollection = yield* _(client);
 
   const add = ({ embedding, text, id, path }: { embedding: number[], text: string, id: string, path: string }) =>
-    Effect.tryPromise({
-      try: () =>
-        qdrantWithCollection.upsert(COLLECTION_NAME, {
-          wait: true,
-          points: [
-            {
-              id,
-              vector: embedding,
-              payload: { text, path },
-            },
-          ],
-        }),
-      catch: (cause) => new QdrantError({ cause }),
-    });
+    Effect.gen(function*(_) {
+      const logger = yield* _(Logger)
+      const result = yield* Effect.tryPromise({
+        try: async () => {
+          const result = await qdrantWithCollection.upsert(COLLECTION_NAME, {
+            wait: true,
+            points: [
+              {
+                id,
+                vector: embedding,
+                payload: { text, path },
+              },
+            ],
+          })
+
+          return result
+        },
+        catch: (cause) => new QdrantError({ cause }),
+      });
+
+      yield* _(logger.info("The embedding is saved", { id, path, text }))
+      return result
+    })
 
   return { add };
 });

@@ -4,6 +4,7 @@ import { getMarkdownFilesStream } from "./getMarkdownFiles.js";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { VectorDB } from "./VectorDB.js";
 import { v4 as uuidv4 } from 'uuid';
+import { Logger } from "./logger.js";
 
 
 const splitter = new RecursiveCharacterTextSplitter({
@@ -22,6 +23,7 @@ const createChunksForText = ({ text }: { text: string }) => Effect.tryPromise({
 
 const indexerEffect = ({ path, text }: { path: string; text: string }) =>
   Effect.gen(function*(_) {
+    const logger = yield* _(Logger)
     const vectorDB = yield* _(VectorDB);
     const { texts } = yield* _(createChunksForText({ text }));
     const embedding = yield* _(
@@ -35,7 +37,7 @@ const indexerEffect = ({ path, text }: { path: string; text: string }) =>
         { concurrency: "unbounded" },
       ),
     );
-    console.log(embedding, { path })
+    yield* _(logger.info("Embedding is finished", { path, embedding }));
   });
 
 
@@ -51,7 +53,8 @@ const handledError = program.pipe(
   )
 )
 const runnable = handledError.pipe(
-  Effect.provide(VectorDB.Live)
+  Effect.provide(VectorDB.Live),
+  Effect.provide(Logger.Live)
 )
 
 Effect.runPromise(runnable).then(console.log)

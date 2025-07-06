@@ -33,7 +33,9 @@
     "effect": "latest",
     "globby": "^14.1.0",
     "langchain": "^0.3.29",
-    "uuid": "^11.1.0"
+    "pino": "^9.7.0",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.8",
@@ -50,6 +52,7 @@
     "@eslint/eslintrc": "3.1.0",
     "@eslint/js": "9.10.0",
     "@types/node": "^22.5.2",
+    "@types/pino": "^7.0.5",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.4.0",
     "@typescript-eslint/parser": "^8.4.0",
