@@ -1,25 +1,5 @@
-version: '3.8'
-
 services:
-  ollama:
-    image: ollama/ollama
-    container_name: ollama
+  qdrant:
+    image: qdrant/qdrant
     ports:
-      - "11434:11434"
-    volumes:
-      - ollama:/root/.ollama
-    entrypoint: /bin/bash
-    command: >
-      -c "
-        echo '[1/3] Pulling model...';
-        ollama pull nomic-embed-text;
-
-        echo '[2/3] Generating embedding...';
-        ollama embeddings --model nomic-embed-text --prompt 'Ollama is running in Docker and embedding text.';
-
-        echo '[3/3] Done. Keeping container alive...';
-        tail -f /dev/null
-      "
-
-volumes:
-  ollama:
+      - "6333:6333"

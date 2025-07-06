@@ -9,5 +9,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.12.2"
+  "packageManager": "pnpm@10.12.4",
+  "dependencies": {
+    "langchain": "^0.3.29"
+  },
+  "devDependencies": {
+    "@types/uuid": "^10.0.0"
+  }
 }

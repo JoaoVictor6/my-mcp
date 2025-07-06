@@ -16,11 +16,11 @@ const generateEmbedding = async (text: string) => {
   if (!res.ok) {
     throw new Error(await res.text())
   }
-  return await res.json() as unknown
+  return await res.json() as unknown as { embedding: number[] }
 }
 
-export const generateEmbeddingEffect = (text: string) => Effect.tryPromise({
-  try: () => generateEmbedding(text),
+export const generateEmbeddingEffect = ({ text }: { text: string }) => Effect.tryPromise({
+  try: async () => await generateEmbedding(text),
   catch: (error) => {
     throw new Error("vish", { cause: error })
   }
